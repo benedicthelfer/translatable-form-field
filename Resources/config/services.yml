@@ -1,0 +1,11 @@
+services:
+    
+    bnh.form.type.translator:
+        class:     Bnh\TranslatableFieldBundle\Form\Type\TranslatorType
+        arguments:  ['%bnh_translatable_field.locales%','@bnh.translatablefieldmanager', '@translator']
+        tags:
+            -  { name: form.type, alias: bnhtranslations }
+            
+    bnh.translatablefieldmanager:
+        class: Bnh\TranslatableFieldBundle\Helpers\TranslatableFieldManager
+        arguments: ["@doctrine"]
