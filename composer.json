@@ -7,5 +7,10 @@
     ,"license": "MIT"
     ,"version": "0.0.1-dev"
     ,"target-dir": "Bnh/TranslatableFieldBundle"
-    ,"require": {}
+    ,"autoload": {
+        "psr-0": { "Bnh\\TranslatableFieldBundle": "" }
+    }
+    ,"require": {
+        "php": ">=5.3.3"
+    }
 }
