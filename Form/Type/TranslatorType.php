@@ -40,7 +40,7 @@ class TranslatorType extends AbstractType
         $locales = $options['locales'];
         
         // fetch data for each locale on this field of the object
-        $translations = $this->translatablefieldmanager->getTranslatedFields($className, $fieldName, $id);
+        $translations = $this->translatablefieldmanager->getTranslatedFields($className, $fieldName, $id, $locales);
 
         // 'populate' fields by *hook on form generation
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($fieldName, $locales, $translations)
