@@ -7,75 +7,48 @@ use Symfony\Component\Form\Form as Form;
 class TranslatableFieldManager
 {
     protected $em;
+    protected $translationsRepository;
         
     public function __construct(RegistryInterface $reg)
     {
         $this->em = $reg->getManager();
+        $this->translationsRepository = $this->em->getRepository('Gedmo\Translatable\Entity\Translation');
     }
     
-    // call field getter on object
-    private function getField($entity, $field)
-    {
-        $getterFunctionName = 'get'.$field;
-        return $entity->{$getterFunctionName}();
-    }
-    
-    // call field setter on object
-    private function setField($entity, $field, $value)
-    {
-        $setterFunctionName = 'set'.$field;
-        $entity->{$setterFunctionName}($value);
-    }
-    
-    // construct array from stored fields -> translated[locale][fieldname]
-    // fetch fields by *stringify field getter on object
-    public function getTranslatedFields($class, $field, $id, $locales)
+    // fetch fields
+    public function getTranslatedFields($class, $field, $id)
     {
         // get entitymanager, get entity
         $em = $this->em;
         $entity = $em->getRepository($class)->find($id);
         
-        // get data for different locales
-        $translated;
-        foreach($locales as $localeCode)
-        {
-            $entity->setTranslatableLocale($localeCode);
-            $em->refresh($entity);
-            $translated[$localeCode][$field] = $this->getField($entity, $field);
-        }
-        
-        return $translated;
+        // search translations for entity
+        $translations = $this->translationsRepository->findTranslations($entity);
+        return $translations;
     }
     
     // persist
     public function persistTranslations(Form $form, $class, $field, $id, $locales)
     {
-        $translations = $form->getData();
+        // data submitted on the form
+        $submittedTranslations = $form->getData();
 
+        // get entity, get stored translations
         $em = $this->em;
         $repository = $em->getRepository($class);
+        $entity = $repository->find($id);
+        $storedTranslations = $this->translationsRepository->findTranslations($entity);
         
-        // loop on locales
-        // parse form data
-        // get data stored in db
-        // set form data on object if needed
-        foreach($locales as $locale)
+        foreach($submittedTranslations as $formFieldName => $formContent)
         {
-            if(array_key_exists($locale,$translations) && ($translations[$locale] !== NULL))
+            // if the formfield is a translation
+            if(in_array($formFieldName, $locales))
             {
-                $entity = $repository->find($id);
-                $entity->setTranslatableLocale($locale);
-                $em->refresh($entity);
-                
-                $postedValue = $translations[$locale];
-                $storedValue = $this->getField($entity, $field);
-                
-                if($storedValue !== $postedValue)
-                {
-                    $this->setField($entity, $field, $postedValue);
-                    $em->flush();
-                }
+                $this->translationsRepository->translate($entity, $field, $formFieldName, $formContent);
             }
         }
+        
+        $em->persist($entity);
+        $em->flush();
     }
 }
