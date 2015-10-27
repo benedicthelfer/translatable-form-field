@@ -29,7 +29,7 @@ class TranslatableFieldManager
     
     // construct array from stored fields -> translated[locale][fieldname]
     // fetch fields by *stringify field getter on object
-    public function getTranslatedFields($class, $field, $id, $locales)
+    public function getTranslatedFields($class, $field, $id, $locales, $userLocale)
     {
         // get entitymanager, get entity
         $em = $this->em;
@@ -44,6 +44,10 @@ class TranslatableFieldManager
             $translated[$localeCode][$field] = $this->getField($entity, $field);
         }
         
+        // switch back to user locale
+        $entity->setTranslatableLocale($userLocale);
+        $em->refresh($entity);
+        
         return $translated;
     }
     
@@ -54,6 +58,7 @@ class TranslatableFieldManager
 
         $em = $this->em;
         $repository = $em->getRepository($class);
+        $entity = $repository->find($id);
         
         // loop on locales
         // parse form data
@@ -63,7 +68,6 @@ class TranslatableFieldManager
         {
             if(array_key_exists($locale,$translations) && ($translations[$locale] !== NULL))
             {
-                $entity = $repository->find($id);
                 $entity->setTranslatableLocale($locale);
                 $em->refresh($entity);
                 

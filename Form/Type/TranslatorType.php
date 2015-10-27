@@ -19,7 +19,7 @@ class TranslatorType extends AbstractType
 {
     protected $translatablefieldmanager;
     private $locales;
-    private $currentlocale;
+    private $userLocale;
     private $translator;
     
     public function __construct($localeCodes ,TranslatableFieldManager $translatableFieldManager, TranslatorInterface $translator)
@@ -27,7 +27,7 @@ class TranslatorType extends AbstractType
         $this->translatablefieldmanager = $translatableFieldManager;
         $this->translator = $translator;
         $this->locales = $localeCodes;
-        $this->currentlocale = $this->translator->getLocale();
+        $this->userLocale = $this->translator->getLocale();
     }
     
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -38,9 +38,10 @@ class TranslatorType extends AbstractType
         $className = $options['translation_data_class'];
         $id = $options['object_id'];
         $locales = $options['locales'];
+        $userLocale = $this->userLocale;
         
         // fetch data for each locale on this field of the object
-        $translations = $this->translatablefieldmanager->getTranslatedFields($className, $fieldName, $id, $locales);
+        $translations = $this->translatablefieldmanager->getTranslatedFields($className, $fieldName, $id, $locales, $userLocale);
 
         // 'populate' fields by *hook on form generation
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($fieldName, $locales, $translations)
@@ -68,7 +69,7 @@ class TranslatorType extends AbstractType
     {
         // pass some variables for field rendering
         $view->vars['locales'] = $options['locales'];
-        $view->vars['currentlocale'] = $this->currentlocale;
+        $view->vars['currentlocale'] = $this->userLocale;
         $view->vars['tranlatedtablocales'] = $this->getTabTranslations();
     }
 
@@ -90,7 +91,7 @@ class TranslatorType extends AbstractType
     
     private function getTranslatedLocalCode($localeCode)
     {
-        return \Locale::getDisplayLanguage($localeCode, $this->currentlocale);
+        return \Locale::getDisplayLanguage($localeCode, $this->userLocale);
     }
     
     private function checkOptions($options)
