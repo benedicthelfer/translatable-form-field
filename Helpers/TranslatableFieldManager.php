@@ -44,15 +44,14 @@ class TranslatableFieldManager
             $translated[$localeCode][$field] = $this->getField($entity, $field);
         }
         
-        // switch back to user locale
-        $entity->setTranslatableLocale($userLocale);
-        $em->refresh($entity);
+        // switch entity locale back to user's locale
+        $this->setEntityToUserLocale($entity, $userLocale);
         
         return $translated;
     }
     
     // persist
-    public function persistTranslations(Form $form, $class, $field, $id, $locales)
+    public function persistTranslations(Form $form, $class, $field, $id, $locales, $userLocale)
     {
         $translations = $form->getData();
 
@@ -81,5 +80,14 @@ class TranslatableFieldManager
                 }
             }
         }
+        
+        // switch entity locale back to user's locale
+        $this->setEntityToUserLocale($entity, $userLocale);
+    }
+    
+    private function setEntityToUserLocale($entity, $locale)
+    {
+        $entity->setTranslatableLocale($locale);
+        $em->refresh($entity);
     }
 }

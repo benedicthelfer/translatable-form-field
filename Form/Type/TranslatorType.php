@@ -58,10 +58,10 @@ class TranslatorType extends AbstractType
         });
 
         // submit
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($fieldName, $className, $id, $locales)
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($fieldName, $className, $id, $locales, $userLocale)
         {
             $form = $event->getForm();
-            $this->translatablefieldmanager->persistTranslations($form, $className, $fieldName, $id, $locales);
+            $this->translatablefieldmanager->persistTranslations($form, $className, $fieldName, $id, $locales, $userLocale);
         });
     }
     
