@@ -88,6 +88,6 @@ class TranslatableFieldManager
     private function setEntityToUserLocale($entity, $locale)
     {
         $entity->setTranslatableLocale($locale);
-        $em->refresh($entity);
+        $this->em->refresh($entity);
     }
 }
