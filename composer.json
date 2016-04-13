@@ -2,7 +2,7 @@
     "name": "benedicthelfer/translatable-form-field"
     ,"type": "symfony-bundle"
     ,"description": "A Symfony2 bundle responsible for translatable form fields in symfony2 / sonata admin."
-    ,"keywords": [ "translatable" ]
+    ,"keywords": ["gedmo", "sonata", "translate", "translation", "translatable"]
     ,"homepage": "https://github.com/benedicthelfer/translatable-form-field"
     ,"license": "MIT"
     ,"version": "0.0.1-dev"
