@@ -1,8 +1,6 @@
 # translatable-form-field
 This bundle is responsible for translatable form fields in symfony2 / sonata admin.
 
-Keep in mind, that this bundle is **under development, not for production use!**
-
 Usage:
 
 - add to 'AppKernel'
@@ -18,6 +16,7 @@ public function registerBundles()
 - config
 ```
 bnh_translatable_field:
+    default_locale: en_GB
     locales: ['de_DE', 'en_GB', 'es_ES', 'fr_FR', 'hu_HU', 'ru_RU', 'sv_SE']
     templating: 'BnhTranslatableFieldBundle:FormType:bnhtranslations.html.twig'
 ```
@@ -58,9 +57,6 @@ class YourEntity implements Translatable
 ```
     protected function configureFormFields(FormMapper $formMapper)
     {
-        $objectClass = $this->getClass();
-        $id = $this->getSubject()->getId();
-        
-        $formMapper->add('fieldname', 'bnhtranslations', array('translation_data_class' => $objectClass, 'object_id' => $id));
+        $formMapper->add('fieldname', 'bnhtranslations');
     }
 ```

@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 namespace Bnh\TranslatableFieldBundle\DependencyInjection;
 
@@ -14,6 +14,7 @@ use Symfony\Component\DependencyInjection\Loader;
  */
 class BnhTranslatableFieldExtension extends Extension
 {
+
     /**
      * {@inheritdoc}
      */
@@ -22,9 +23,10 @@ class BnhTranslatableFieldExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
-        
+
+        $container->setParameter('bnh_translatable_field.default_locale', $config['default_locale']);
         $container->setParameter('bnh_translatable_field.locales', $config['locales']);
         $container->setParameter('bnh_translatable_field.templating', $config['templating']);
     }

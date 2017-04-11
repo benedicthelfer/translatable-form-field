@@ -2,7 +2,7 @@ services:
     
     bnh.form.type.translator:
         class:     Bnh\TranslatableFieldBundle\Form\Type\TranslatorType
-        arguments:  ['%bnh_translatable_field.locales%','@bnh.translatablefieldmanager', '@translator']
+        arguments:  ['%bnh_translatable_field.default_locale%', '%bnh_translatable_field.locales%', '@bnh.translatablefieldmanager', '@translator']
         tags:
             -  { name: form.type, alias: bnhtranslations }
             
