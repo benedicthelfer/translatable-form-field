@@ -21,7 +21,7 @@ bnh_translatable_field:
     templating: 'BnhTranslatableFieldBundle:FormType:bnhtranslations.html.twig'
 ```
 
-- entity
+- entity (ext_translations)
 ```
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Translatable\Translatable;
@@ -49,6 +49,54 @@ class YourEntity implements Translatable
     public function setTranslatableLocale($locale)
     {
         $this->locale = $locale;
+    }
+}
+```
+
+- entity (for personal translations)
+```
+/**
+ * @ORM\Entity
+ * @Gedmo\TranslationEntity(class="YourEntityTranslation")
+ */
+class YourEntity
+{
+    /**
+     * @ORM\OneToMany(targetEntity="YourEntityTranslation", mappedBy="object", cascade={"persist", "remove"})
+     */
+    private $translations;
+
+    public function __construct()
+    {
+        $this->translations = new ArrayCollection();
+    }
+
+    public function getTranslations()
+    {
+        return $this->translations;
+    }
+
+    public function addTranslation(YourEntityTranslation $newTranslation)
+    {
+        if($newTranslation->getContent())
+        {
+            $found = false;
+            foreach($this->translations as $translation)
+            {
+                if(($translation->getLocale() === $newTranslation->getLocale()) && ($translation->getField() === $newTranslation->getField()))
+                {
+                    $found = true;
+                    $translation->setContent($newTranslation->getContent());
+                    break;
+                }
+            }
+            
+            if(!$found)
+            {
+                $newTranslation->setObject($this);
+                $this->translations[] = $newTranslation;
+            }
+        }
     }
 }
 ```
