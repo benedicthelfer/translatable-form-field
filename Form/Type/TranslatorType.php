@@ -3,6 +3,7 @@
 namespace Bnh\TranslatableFieldBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormView;
@@ -37,11 +38,11 @@ class TranslatorType extends AbstractType
         $defaultLocale = $this->defaultLocale;
 
         // set fields
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($fieldName, $locales) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($fieldName, $locales, $options) {
             $form = $event->getForm();
 
             foreach ($locales as $locale) {
-                $form->add($locale, 'text', ['label' => false]);
+                $form->add($locale, $options['form_type'], ['label' => false]);
             }
         });
 
@@ -90,12 +91,11 @@ class TranslatorType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array
-            (
-            'mapped' => false
-            , 'required' => false
-            , 'by_reference' => false
-            )
-        );
+        $resolver->setDefaults(array(
+            'mapped' => false,
+            'required' => false,
+            'by_reference' => false,
+            'form_type' => TextType::class,
+        ));
     }
 }
