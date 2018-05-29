@@ -68,6 +68,24 @@ class TranslatableFieldManager
                 ->getSingleResult()[$field];
     }
 
+    private function setFieldInDefaultLocale($entity, $field, $value)
+    {
+        $class = \get_class($entity);
+        $identifierField = $this->em->getClassMetadata($class)->getIdentifier()[0];
+        $identifierValue = $this->propertyAccessor->getValue($entity, $identifierField);
+
+        $qb = $this->em->getRepository($class)->createQueryBuilder('entity');
+
+        $qb->update()
+            ->set("entity.$field", '?1')
+            ->setParameter(1, $value)
+            ->where("entity.$identifierField = :identifier")
+            ->setParameter('identifier', $identifierValue)
+            ->getQuery()
+            ->setHint(TranslatableListener::HINT_TRANSLATABLE_LOCALE, $this->defaultLocale)
+            ->execute();
+    }
+
     // SELECT
     public function getTranslatedFields($entity, $fieldName)
     {
@@ -98,7 +116,7 @@ class TranslatableFieldManager
                 // personal
                 if (\method_exists($entity, self::GEDMO_PERSONAL_TRANSLATIONS_SET) && \is_callable(array($entity, self::GEDMO_PERSONAL_TRANSLATIONS_SET))) {
                     if ($locale === $this->defaultLocale) {
-                        $this->propertyAccessor->setValue($entity, $fieldName, $value);
+                        $this->setFieldInDefaultLocale($entity, $fieldName, $value);
                     } else {
                         $translationClassName = $this->getPersonalTranslationClassName($entity);
                         $entity->{self::GEDMO_PERSONAL_TRANSLATIONS_SET}(new $translationClassName($locale, $fieldName, $value));
