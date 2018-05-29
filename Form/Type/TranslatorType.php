@@ -20,12 +20,10 @@ class TranslatorType extends AbstractType
 
     protected $translatablefieldmanager;
     private $locales;
-    private $defaultLocale;
     private $currentLocale;
 
-    public function __construct($defaultLocale, $localeCodes, TranslatableFieldManager $translatableFieldManager, TranslatorInterface $translator)
+    public function __construct($localeCodes, TranslatableFieldManager $translatableFieldManager, TranslatorInterface $translator)
     {
-        $this->defaultLocale = $defaultLocale;
         $this->locales = $localeCodes;
         $this->translatablefieldmanager = $translatableFieldManager;
         $this->currentLocale = $translator->getLocale();
@@ -35,7 +33,6 @@ class TranslatorType extends AbstractType
     {
         $fieldName = $builder->getName();
         $locales = $this->locales;
-        $defaultLocale = $this->defaultLocale;
 
         // set fields
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($fieldName, $locales, $options) {
@@ -47,14 +44,14 @@ class TranslatorType extends AbstractType
         });
 
         // submit
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($fieldName, $locales, $defaultLocale) {
-            $this->translatablefieldmanager->persistTranslations($event->getForm(), $locales, $defaultLocale);
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($fieldName, $locales) {
+            $this->translatablefieldmanager->persistTranslations($event->getForm(), $locales);
         });
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $translatedFieldValues = $this->translatablefieldmanager->getTranslatedFields($form->getParent()->getData(), $form->getName(), $this->defaultLocale);
+        $translatedFieldValues = $this->translatablefieldmanager->getTranslatedFields($form->getParent()->getData(), $form->getName());
 
         // set form field data (translations)
         foreach ($this->locales as $locale) {
