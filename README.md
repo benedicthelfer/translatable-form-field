@@ -98,6 +98,19 @@ class YourEntity
             }
         }
     }
+
+    public function hasTranslation($locale, $fieldName)
+    {
+        foreach ($this->translations as $translation)
+        {
+            if(($translation->getLocale() === $locale) && ($translation->getField() === $fieldName))
+            {
+                return true;
+            }
+        }
+        
+        return false;
+    }
 }
 ```
 

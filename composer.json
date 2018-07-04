@@ -5,7 +5,7 @@
     ,"keywords": ["gedmo", "sonata", "translate", "translation", "translatable"]
     ,"homepage": "https://github.com/benedicthelfer/translatable-form-field"
     ,"license": "MIT"
-    ,"version": "0.0.2-dev"
+    ,"version": "0.0.3-dev"
     ,"target-dir": "Bnh/TranslatableFieldBundle"
     ,"autoload": {
         "psr-0": { "Bnh\\TranslatableFieldBundle": "" }
