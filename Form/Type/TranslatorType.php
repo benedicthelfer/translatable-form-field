@@ -95,4 +95,9 @@ class TranslatorType extends AbstractType
             'form_type' => TextType::class,
         ));
     }
+    
+    public function getBlockPrefix()
+    {
+        return $this->getName();
+    }
 }
